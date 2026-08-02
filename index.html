@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberShield - Password Strength Analyzer & Security Suite</title>
+  <meta name="description" content="Real-time password strength analyzer with entropy calculation, brute-force crack time matrix, privacy-preserving HIBP breach check, and smart password generator.">
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Application Header -->
+    <header class="app-header">
+      <div class="brand-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        CyberShield Security Suite
+      </div>
+      <h1 class="app-title">Password Strength <span>Analyzer</span></h1>
+      <p class="app-subtitle">Analyze real-time entropy, estimate brute-force crack resistance, audit against data breaches, and generate cryptographically strong passwords.</p>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <div class="main-grid">
+      
+      <!-- Left Column: Password Analyzer & Metrics -->
+      <div class="column-left">
+        
+        <!-- Input Section -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Test Password
+            </h2>
+            <span id="charCountBadge" style="font-size: 0.85rem; color: var(--text-secondary);">0 chars</span>
+          </div>
+
+          <div class="input-section">
+            <div class="input-wrapper">
+              <input type="password" id="passwordInput" class="password-input" placeholder="Type or paste a password to analyze..." autocomplete="off" spellcheck="false">
+              <div class="input-actions">
+                <button type="button" id="toggleVisibilityBtn" class="action-btn" title="Toggle Visibility" aria-label="Toggle password visibility">
+                  <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button type="button" id="copyInputBtn" class="action-btn" title="Copy Password" aria-label="Copy password">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Character Composition Bar -->
+          <div class="comp-bar-wrapper">
+            <div class="comp-bar">
+              <div id="segLower" class="comp-seg seg-lower" style="width: 0%;"></div>
+              <div id="segUpper" class="comp-seg seg-upper" style="width: 0%;"></div>
+              <div id="segNumber" class="comp-seg seg-number" style="width: 0%;"></div>
+              <div id="segSymbol" class="comp-seg seg-symbol" style="width: 0%;"></div>
+            </div>
+            <div class="comp-legend">
+              <span><span class="legend-dot" style="background: var(--cyan-primary);"></span> Lowercase (<strong id="cntLower">0</strong>)</span>
+              <span><span class="legend-dot" style="background: var(--violet-primary);"></span> Uppercase (<strong id="cntUpper">0</strong>)</span>
+              <span><span class="legend-dot" style="background: var(--amber-primary);"></span> Numbers (<strong id="cntNumber">0</strong>)</span>
+              <span><span class="legend-dot" style="background: var(--emerald-primary);"></span> Symbols (<strong id="cntSymbol">0</strong>)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Strength Gauge & Entropy -->
+        <div class="glass-card strength-gauge-card" style="margin-top: 1.5rem;">
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 160 160">
+              <circle class="gauge-bg" cx="80" cy="80" r="70" />
+              <circle id="gaugeMeter" class="gauge-meter" cx="80" cy="80" r="70" />
+            </svg>
+            <div class="gauge-center">
+              <span id="scoreNum" class="score-num">0</span>
+              <span class="score-max">/ 100</span>
+            </div>
+          </div>
+
+          <div id="strengthBadge" class="strength-badge badge-danger">Enter Password</div>
+
+          <div class="entropy-meta">
+            <div class="entropy-item">
+              <span>Raw Entropy:</span>
+              <strong id="rawEntropyVal">0 bits</strong>
+            </div>
+            <div class="entropy-item">
+              <span>Effective Entropy:</span>
+              <strong id="effectiveEntropyVal">0 bits</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brute-Force Crack Time Matrix -->
+        <div class="glass-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Estimated Brute-Force Crack Time
+            </h2>
+          </div>
+
+          <div class="crack-matrix">
+            <div class="crack-card">
+              <div class="crack-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Online Throttled (10/s)
+              </div>
+              <div id="crackOnlineThrottled" class="crack-val">Instant</div>
+            </div>
+
+            <div class="crack-card">
+              <div class="crack-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                Online Unthrottled (10k/s)
+              </div>
+              <div id="crackOnlineUnthrottled" class="crack-val">Instant</div>
+            </div>
+
+            <div class="crack-card">
+              <div class="crack-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                Offline Fast GPU (100B/s)
+              </div>
+              <div id="crackOfflineGpu" class="crack-val">Instant</div>
+            </div>
+
+            <div class="crack-card">
+              <div class="crack-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Quantum Array (10T/s)
+              </div>
+              <div id="crackSupercomputer" class="crack-val">Instant</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Rule Checklist, Recommendations, Generator & Breach Check -->
+      <div class="column-right">
+
+        <!-- Rule Checklist -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Security Requirements
+            </h2>
+          </div>
+          <div class="checklist-grid">
+            <div id="chkLength" class="check-item"><span class="check-icon">✓</span> 12+ Characters</div>
+            <div id="chkUpper" class="check-item"><span class="check-icon">✓</span> Uppercase (A-Z)</div>
+            <div id="chkLower" class="check-item"><span class="check-icon">✓</span> Lowercase (a-z)</div>
+            <div id="chkNumber" class="check-item"><span class="check-icon">✓</span> Number (0-9)</div>
+            <div id="chkSymbol" class="check-item"><span class="check-icon">✓</span> Special Symbol</div>
+            <div id="chkPattern" class="check-item"><span class="check-icon">✓</span> No Dictionary Words</div>
+          </div>
+        </div>
+
+        <!-- Smart Suggestions -->
+        <div class="glass-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Smart Recommendations
+            </h2>
+          </div>
+          <div id="suggestionsList" class="suggestions-list">
+            <div class="sugg-card medium">
+              <div>
+                <div class="sugg-title">Enter a password above</div>
+                <div class="sugg-desc">Get tailored recommendations to strengthen your password against modern dictionary and GPU brute force attacks.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Generator Panel -->
+        <div class="glass-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              Smart Password Generator
+            </h2>
+          </div>
+
+          <div class="tab-group">
+            <button type="button" id="tabRandomBtn" class="tab-btn active">Random Characters</button>
+            <button type="button" id="tabPassphraseBtn" class="tab-btn">Memorable Passphrase</button>
+          </div>
+
+          <div class="gen-output">
+            <span id="genOutputText">Generate a password</span>
+            <button type="button" id="copyGenBtn" class="action-btn" title="Copy & Analyze" aria-label="Copy generated password">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+
+          <!-- Random Password Controls -->
+          <div id="panelRandom" class="gen-options">
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Password Length</span>
+                <span id="lengthVal" class="slider-val">16</span>
+              </div>
+              <input type="range" id="lengthSlider" min="8" max="64" value="16">
+            </div>
+
+            <div class="checkbox-grid">
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkGenUpper" checked> Uppercase (A-Z)
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkGenLower" checked> Lowercase (a-z)
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkGenNumber" checked> Digits (0-9)
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkGenSymbol" checked> Symbols (!@#$)
+              </label>
+              <label class="checkbox-label" style="grid-column: span 2;">
+                <input type="checkbox" id="chkAvoidAmbiguous"> Avoid Ambiguous (0, O, 1, l, I)
+              </label>
+            </div>
+          </div>
+
+          <!-- Passphrase Controls -->
+          <div id="panelPassphrase" class="gen-options" style="display: none;">
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Word Count</span>
+                <span id="wordCountVal" class="slider-val">4</span>
+              </div>
+              <input type="range" id="wordCountSlider" min="3" max="8" value="4">
+            </div>
+
+            <div class="checkbox-grid">
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkCapWords" checked> Capitalize Words
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkIncNumber" checked> Include 2-Digit Number
+              </label>
+            </div>
+          </div>
+
+          <button type="button" id="generateBtn" class="btn-primary" style="margin-top: 1.25rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Generate Strong Password
+          </button>
+        </div>
+
+        <!-- HIBP Breach Audit Shield -->
+        <div class="glass-card breach-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Breach Audit Shield (k-Anonymity)
+            </h2>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            Queries Have I Been Pwned database securely using <strong>k-Anonymity</strong> SHA-1 prefix hashing. Your actual password is <em>never</em> transmitted across the internet.
+          </p>
+
+          <button type="button" id="checkBreachBtn" class="btn-primary" style="margin-top: 1rem; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-card); box-shadow: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Check Breach Exposure
+          </button>
+
+          <div id="breachStatusBox" class="breach-status-box" style="display: none;">
+            <div id="breachStatusText" style="font-size: 0.9rem; font-weight: 600;">Status unknown</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Security Educational Tips -->
+    <section class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="tip-title">Length Beats Complexity</div>
+        <div class="tip-desc">A 16-character phrase like <code>correct-horse-battery-staple</code> is exponentially harder to crack than <code>P@ss1</code> because length increases entropy exponentially.</div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="tip-title">Use a Password Manager</div>
+        <div class="tip-desc">Never reuse passwords across sites. Use a trusted password manager (Bitwarden, 1Password) to generate and store unique, high-entropy passwords for every account.</div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="tip-title">Enable 2FA / MFA</div>
+        <div class="tip-desc">Always enable Two-Factor Authentication (authenticator app or hardware key). Even if a password leaks in a breach, 2FA prevents unauthorized account access.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast Container for Notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Standalone JS script (works via both file:// double-click and http://) -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>
